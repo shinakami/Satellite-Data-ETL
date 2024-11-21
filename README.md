@@ -46,6 +46,7 @@ Usage:
 Input: Data dictionary and output path.
 Output: Serialized data file in the specified format.
 Setup and Execution
+
 Prerequisites
 Python 3.x
 Required libraries:
@@ -57,13 +58,11 @@ loguru
 Steps to Run
 Extract Cloud Data:
 
-bash
 
 python CloudProductsExtractor.py
 Configure the file_path variable for the binary file.
 Process Albedo and Radiance Data:
 
-bash
 
 python BtpAlbExtractor.py
 Set the directory variable to the folder containing .btp and .alb files.
