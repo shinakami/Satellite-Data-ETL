@@ -1,95 +1,50 @@
-ReadMe: ETL Pipeline for Satellite Data Processing
 Project Overview
-This ETL (Extract, Transform, Load) pipeline processes satellite data, particularly focusing on cloud and radiation products. The pipeline is divided into four primary scripts:
+This project provides a complete ETL (Extract, Transform, Load) workflow for processing Himawari-08 satellite data files. It supports .bin, .alb, and .btp formats and enables storing the processed data in HDF5, NetCDF, NPZ, and JSON formats.
 
-CloudProductsExtractor.py: Extracts variables from binary files for cloud-related metrics.
-BtpAlbExtractor.py: Processes broadband top-of-atmosphere radiance (btp) and albedo (alb) data.
-filerootExtractor.py: Manages file discovery by type and extension.
-DataLakesLoad.py: Handles data saving and loading in various formats (e.g., HDF5, NetCDF, JSON, NPZ).
-File Details
-1. CloudProductsExtractor.py
-Functionality:
-
-Extracts predefined variables (solzen, relaz, cm, cldphase, etc.) from satellite binary files.
-Saves the extracted data to multiple formats (HDF5, NetCDF, JSON, NPZ).
-Measures and logs the time taken for saving and loading operations.
-Usage:
-
-Input: Path to a binary file containing Himawari-08 satellite data.
-Output: Data saved in user-defined formats.
-2. BtpAlbExtractor.py
-Functionality:
-
-Reads and processes binary files containing btp and alb data.
-Classifies and stores these metrics in respective categories.
-Provides query functions to extract specific data points based on coordinates.
-Usage:
-
-Input: Directory containing .btp and .alb files.
-Output: Processed data saved as HDF5 and JSON.
-3. filerootExtractor.py
-Functionality:
-
-Identifies and lists files in a directory based on a given file extension.
-Supports dynamic directory paths and extensions.
-Usage:
-
-Input: Directory path and desired file extension.
-Output: List of file paths.
-4. DataLakesLoad.py
-Functionality:
-
-Saves and loads data in various formats (HDF5, NetCDF, JSON, NPZ).
-Ensures compatibility across formats for easy data sharing and analysis.
-Usage:
-
-Input: Data dictionary and output path.
-Output: Serialized data file in the specified format.
-Setup and Execution
-
-Prerequisites
-Python 3.x
-Required libraries:
+Requirements
+Python: 3.9+
+Dependencies:
 numpy
 h5py
 netCDF4
-json
 loguru
-Steps to Run
-Extract Cloud Data:
-
-
-python CloudProductsExtractor.py
-Configure the file_path variable for the binary file.
-Process Albedo and Radiance Data:
-
-
-python BtpAlbExtractor.py
-Set the directory variable to the folder containing .btp and .alb files.
-List Files:
 
 
 
-from filerootExtractor import get_files_by_extension
-files = get_files_by_extension(directory="path/to/folder", extension=".bin")
-print(files)
-Save and Load Data: Use methods in DataLakesLoad.py directly:
+Modules
+1. main.py
+The main program coordinates the ETL process, including data extraction, cleaning, transformation, and saving/loading in various formats.
+Key Features:
 
+Logging data operations.
+Supports data formats: HDF5, NetCDF, NPZ, JSON.
+Records the time taken for data read/write operations.
 
-from DataLakesLoad import save_to_hdf5, load_from_hdf5
-save_to_hdf5(data_dict, "output.h5")
-loaded_data = load_from_hdf5("output.h5")
-Sample Output
-Example: Extracted Variables
-After running CloudProductsExtractor.py, the following variables are saved:
+2. CloudProductsExtractor.py
+Extracts cloud product data from .bin files.
+Features:
 
-Solar Zenith Angle (solzen)
-Relative Azimuth Angle (relaz)
-Cloud Mask (cm)
-Cloud Phase (cldphase)
-Cloud Optical Depth (cod_vis)
-Logs
-Logs are saved in file_operations.log, recording the time taken for each operation.
+Extracts data based on byte offsets.
+Supports variables such as solzen, relaz, cm, etc.
 
-Authors
-This pipeline was developed to streamline satellite data processing for environmental and atmospheric studies. For inquiries or contributions, please contact the development team.
+3. BtpAlbExtractor.py
+Extracts satellite radiation data from .alb and .btp files.
+Features:
+
+Classifies data by file type (alb or btp).
+Reads and reshapes data into a 2750x2750 grid.
+4. DataCleanTransform.py
+A module for cleaning data.
+Features:
+
+Replaces invalid values (e.g., -999) with np.nan.
+5. DataLakesLoad.py
+A module for data storage and loading.
+Features:
+
+Supports storing and reading data in HDF5, NetCDF, NPZ, and JSON formats.
+6. filerootExtractor.py
+A file management module used for searching specific file types.
+Features:
+
+Filters files by extension within a directory and returns a list of paths.
